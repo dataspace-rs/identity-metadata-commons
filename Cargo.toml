@@ -1,0 +1,23 @@
+[package]
+name = "identity-metadata-commons"
+version = "0.0.1"
+edition = "2024"
+rust-version = "1.89"
+license = "Apache-2.0"
+description= "Model shared by the identity metadata service and its client."
+repository = "https://github.com/dataspace-rs/identity-metadata-client"
+keywords = ["dataspace", "json-ld"]
+categories = []
+authors = [
+  "Marc-Antoine Arnaud <marc-antoine.arnaud@luminvent.com>",
+]
+
+[features]
+# OpenAPI schemas of the model, with `utoipa`.
+utoipa = ["dep:utoipa"]
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+utoipa = { version = "5", optional = true }
+uuid = "1"
