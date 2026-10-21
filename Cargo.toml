@@ -5,9 +5,10 @@ edition = "2024"
 rust-version = "1.89"
 license = "Apache-2.0"
 description= "Model shared by the identity metadata service and its client."
-repository = "https://github.com/dataspace-rs/identity-metadata-client"
+repository = "https://github.com/dataspace-rs/identity-metadata-commons"
 keywords = ["dataspace", "json-ld"]
 categories = []
+readme = "README.md"
 authors = [
   "Marc-Antoine Arnaud <marc-antoine.arnaud@luminvent.com>",
 ]
