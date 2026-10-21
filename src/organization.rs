@@ -4,6 +4,8 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use uuid::Uuid;
 
+use crate::PartyId;
+
 /// The JSON-LD context of the documents.
 pub const SCHEMA_ORG_CONTEXT: &str = "https://schema.org";
 
@@ -80,13 +82,14 @@ pub struct OrganizationDocument {
 }
 
 impl OrganizationDocument {
-  /// A new document in the schema.org context, with the required properties.
-  pub fn new(identifier: impl Into<String>, name: impl Into<String>) -> Self {
+  /// A new document in the schema.org context, with the required properties; the identifier is
+  /// validated by parsing it into a [`PartyId`].
+  pub fn new(identifier: PartyId, name: impl Into<String>) -> Self {
     Self {
       context: Some(Value::String(SCHEMA_ORG_CONTEXT.to_owned())),
       id: None,
       kind: OrganizationType::Organization,
-      identifier: identifier.into(),
+      identifier: identifier.to_string(),
       name: name.into(),
       legal_name: None,
       location: None,
@@ -258,7 +261,9 @@ mod tests {
   #[test]
   fn serializes_organization() {
     let org = OrganizationDocument::new(
-      "urn:oasis:names:tc:ebcore:partyid-type:iso6523:0002:552100554",
+      "urn:oasis:names:tc:ebcore:partyid-type:iso6523:0002:552100554"
+        .parse()
+        .unwrap(),
       "ACME",
     )
     .with_legal_name("ACME SAS")
@@ -323,7 +328,12 @@ mod tests {
 
   #[test]
   fn reads_organization_id() {
-    let mut org = OrganizationDocument::new("urn:x", "ACME");
+    let mut org = OrganizationDocument::new(
+      "urn:oasis:names:tc:ebcore:partyid-type:iso6523:0002:552100554"
+        .parse()
+        .unwrap(),
+      "ACME",
+    );
     assert_eq!(org.organization_id(), None);
     org.id = Some("https://ims.example/organizations/6f1c2b9e-3d4a-4e8b-9c1f-2a7d5e8b4c3a".into());
     assert_eq!(

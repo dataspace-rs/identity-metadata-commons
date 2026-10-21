@@ -10,20 +10,24 @@ and its [client](https://github.com/dataspace-rs/identity-metadata-client):
 - **Trusted issuers**: the OpenID providers whose tokens may update an organization, validated by
   token introspection (RFC 7662) or by JWT verification with the provider's `jwks_uri`
   (`NewIssuer`, `TrustedIssuer`, `ValidationMethod`).
+- **Identifiers**: the identifier of an organization is an OASIS ebCore Party Id built on
+  ISO 6523, `urn:oasis:names:tc:ebcore:partyid-type:iso6523:<ICD>:<organization id>`, with
+  check-digit validation of SIRENE, SIRET, DUNS and GLN identifiers (`PartyId`, `PartyIdError`).
 - **Errors**: RFC 9457 problem details, `application/problem+json` (`ProblemDetails`).
 
 ## Usage
 
 ```toml
 [dependencies]
-identity-metadata-commons = "0.0.1"
+identity-metadata-commons = "0.2.0"
 ```
 
 ```rust
 use identity_metadata_commons::{NewIssuer, OrganizationDocument};
 
 let organization = OrganizationDocument::new(
-  "urn:oasis:names:tc:ebcore:partyid-type:iso6523:0009:12345678900012",
+  // `parse` fails on an invalid identifier, e.g. a SIRET with a wrong check digit.
+  "urn:oasis:names:tc:ebcore:partyid-type:iso6523:0009:55210055400013".parse()?,
   "Example",
 )
 .with_legal_name("Example SAS")
@@ -41,7 +45,7 @@ let issuer = NewIssuer::jwks("https://auth.example.com/realms/example").with_aud
 {
   "@context": "https://schema.org",
   "@type": "Organization",
-  "identifier": "urn:oasis:names:tc:ebcore:partyid-type:iso6523:0009:12345678900012",
+  "identifier": "urn:oasis:names:tc:ebcore:partyid-type:iso6523:0009:55210055400013",
   "name": "Example",
   "legalName": "Example SAS",
   "location": "Paris, France",
